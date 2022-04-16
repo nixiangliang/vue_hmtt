@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首页</title>
+  </head>
+
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <!-- 1. 引入前端的socket.io注意版本 一定要跟后台对上 -->
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.1.2/client-dist/socket.io.min.js"></script>
+    <div>
+      <p>聊天窗口:</p>
+      <hr />
+      <div id="result"></div>
+    </div>
+    <div>
+      <input type="text" placeholder="用户名" id="user" />
+      <input type="text" placeholder="消息" id="msg" />
+      <button id="btn">发送</button>
+    </div>
+    <script>
+      // 2. 用io()函数链接socket服务器
+      // 如果代码部署到了线上服务器, 这个localhost要换成线上的ip地址
+      // 因为这个网页请求到本地浏览器上查看, 你要还是localhost那不是请求本地呢吗?
+      const socket = io('ws://localhost:4005')
+      $('#btn').on('click', function () {
+        let user = $('#user').val()
+        let msg = $('#msg').val()
+        console.log(user, msg)
+
+        // 3. socket触发后端的事件
+        socket.emit('cTos', { user, msg })
+      })
+
+      socket.on('sToC', (obj) => {
+        $('#result').append($(`<p>${obj.user} 说: ${obj.msg}</p>`))
+      })
+    </script>
+  </body>
+</html>
